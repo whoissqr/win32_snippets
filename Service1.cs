@@ -115,7 +115,8 @@ namespace XapTesterStatus
              
             }
         }
-
+        
+        //The scheduled task to run every Monday, 9am - 2pm.
         private bool DoWork(){
             bool success = false;
             DateTime reportStartDt = getStartOfLastWeek();
@@ -138,7 +139,7 @@ namespace XapTesterStatus
                     OSAT osat = (OSAT)siteIndex;
                     int weekNoOfLastWeek = GetWeekOfYear(DateTime.Now) - 1;
                     string reportName = reportDir + osat.ToString() + "-Weekly-Report-W" + weekNoOfLastWeek + "-Y" + (DateTime.Now.Year-2000) + ".xlsx";
-                    //implementation omitted
+                    //implementation of StdReportCreator omitted
                     List<string> testerList = dbHelper.GetTesterListBySite(siteIndex, reportStartDt);
                     StdReportCreator stdReportCreator = new StdReportCreator(reportStartDt, reportEndDt, 7, testerList, reportName, osat);
                     stdReportCreator.CreateStandardProductionReport();
@@ -160,10 +161,10 @@ namespace XapTesterStatus
 
         private void SendNotificationEmails(List<KeyValuePair<string, string>> OSAT_report)
         {
- 	    //implementation omitted
+            //implementation of ExcelReader omitted
             ExcelReader er = new ExcelReader();
             
-            string subject = "*** MPRS Automatic Weekly Standard OEE Report ***";
+            string subject = "*** Automatic Weekly Standard OEE Report ***";
             bool ishtml = true;
 
             string body = "";
@@ -178,7 +179,7 @@ namespace XapTesterStatus
             body += "</style>";
             body += "</head>";
             body += "<body>";
-            body += "<table class=\"myTable\">";         																
+            body += "<table class=\"myTable\">";
             body += "<tr>";
             body += "<th bgcolor=\"#0000CC\">Factory</th>";
             body += "<th bgcolor=\"#0000CC\">Tester</th>";
@@ -293,7 +294,7 @@ namespace XapTesterStatus
         }
 
         static void getOSATinfoFromFileName(string fileName, ref string osat, ref  string years, ref string ww) {
-            //fileName = "ATK-Weekly-Report-W2-15.xlsx";
+            //e.g. fileName = "ATK-Weekly-Report-W2-15.xlsx";
             string[] split = fileName.Split(new Char[] { '-' });
 
             osat = split[0].ToUpper();
@@ -320,7 +321,7 @@ namespace XapTesterStatus
             return startingDate.Date.AddDays(-7).AddHours(7);          
         }
 
-        public static int GetWeekOfYear(DateTime time)
+        public int GetWeekOfYear(DateTime time)
         {
             DateTimeFormatInfo dfi = DateTimeFormatInfo.CurrentInfo;
             Calendar cal = dfi.Calendar;
@@ -328,7 +329,7 @@ namespace XapTesterStatus
             return cal.GetWeekOfYear(time, dfi.CalendarWeekRule, dfi.FirstDayOfWeek);
         }
 
-        static string getSQL2Insert(string[] strArray) {
+        string getSQL2Insert(string[] strArray) {
             string sqlstr = "INSERT INTO OEE values (";
             foreach(string str in strArray){
                 string tempStr = str;
@@ -345,7 +346,7 @@ namespace XapTesterStatus
             return sqlstr;
         }
 
-        static bool ExecuteSQL(string sqlstr) {
+        bool ExecuteSQL(string sqlstr) {
             bool done = false;
  
             NpgsqlConnection conn = new NpgsqlConnection(DBHelper.getDBConnString("serverName"));
