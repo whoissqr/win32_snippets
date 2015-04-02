@@ -139,7 +139,7 @@ namespace XapTesterStatus
                     int weekNoOfLastWeek = GetWeekOfYear(DateTime.Now) - 1;
                     string reportName = reportDir + osat.ToString() + "-Weekly-Report-W" + weekNoOfLastWeek + "-Y" + (DateTime.Now.Year-2000) + ".xlsx";
                     //implementation omitted
-		    List<string> testerList = dbHelper.GetTesterListBySite(siteIndex, reportStartDt);
+                    List<string> testerList = dbHelper.GetTesterListBySite(siteIndex, reportStartDt);
                     StdReportCreator stdReportCreator = new StdReportCreator(reportStartDt, reportEndDt, 7, testerList, reportName, osat);
                     stdReportCreator.CreateStandardProductionReport();
                     OSAT_report.Add(new KeyValuePair<string, string>(osat.ToString(), reportName));
